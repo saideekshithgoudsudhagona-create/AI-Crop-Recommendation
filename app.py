@@ -309,10 +309,10 @@ if not filtered_df.empty:
         title="Production by Crop"
     )
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
+    # st.plotly_chart(
+    #     fig,
+    #     use_container_width=True
+    # )
     st.write("14")
 else:
     st.warning("No data available for the selected filters.")
