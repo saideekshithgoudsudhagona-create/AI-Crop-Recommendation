@@ -290,37 +290,60 @@ st.write("13")
 # ANALYTICS
 # ---------------------------------------------------
 
+# st.header("📊 Analytics")
+
+# if not filtered_df.empty:
+
+#     crop_chart = (
+#         filtered_df
+#         .groupby("Crop")["Production"]
+#         .sum()
+#         .reset_index()
+#     )
+
+#     fig = px.bar(
+#         crop_chart,
+#         x="Crop",
+#         y="Production",
+#         color="Production",
+#         title="Production by Crop"
+#     )
+
+#     # st.plotly_chart(
+#     #     fig,
+#     #     use_container_width=True
+#     # )
+#     st.write("14")
+# else:
+#     st.warning("No data available for the selected filters.")
+# # ---------------------------------------------------
+# # ABOUT
+# # ---------------------------------------------------
+
+# st.header("About")
 st.header("📊 Analytics")
 
-if not filtered_df.empty:
+st.write("Reached Analytics")
 
-    crop_chart = (
-        filtered_df
-        .groupby("Crop")["Production"]
-        .sum()
-        .reset_index()
-    )
+import plotly.express as px
 
-    fig = px.bar(
-        crop_chart,
-        x="Crop",
-        y="Production",
-        color="Production",
-        title="Production by Crop"
-    )
+test = pd.DataFrame({
+    "Crop": ["Rice", "Wheat", "Maize"],
+    "Production": [100, 200, 150]
+})
 
-    # st.plotly_chart(
-    #     fig,
-    #     use_container_width=True
-    # )
-    st.write("14")
-else:
-    st.warning("No data available for the selected filters.")
-# ---------------------------------------------------
-# ABOUT
-# ---------------------------------------------------
+fig = px.bar(
+    test,
+    x="Crop",
+    y="Production",
+    title="Test Chart"
+)
+
+st.plotly_chart(fig)
 
 st.header("About")
+
+st.write("About section")
 
 st.write("""
 ### Algorithms Used
