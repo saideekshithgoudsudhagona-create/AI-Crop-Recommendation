@@ -342,6 +342,22 @@
 # Display Result
 # """)
 import streamlit as st
+st.write("1")
 
-st.title("Hello World")
-st.success("If you see this, Streamlit is working.")
+import pandas as pd
+st.write("2")
+
+import joblib
+st.write("3")
+
+import plotly.express as px
+st.write("4")
+
+from recommendation import recommend_crop
+st.write("5")
+
+model = joblib.load("models/model.pkl")
+st.write("6")
+
+encoders = joblib.load("models/encoders.pkl")
+st.write("7")
