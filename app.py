@@ -1,343 +1,347 @@
-import streamlit as st
-import plotly.express as px #new
-import plotly.graph_objects as go #new
-import pandas as pd
-import joblib
-from recommendation import recommend_crop
+# import streamlit as st
+# import plotly.express as px #new
+# import plotly.graph_objects as go #new
+# import pandas as pd
+# import joblib
+# from recommendation import recommend_crop
 
-# ---------------------------------------------------
-# PAGE CONFIG
-# ---------------------------------------------------
+# # ---------------------------------------------------
+# # PAGE CONFIG
+# # ---------------------------------------------------
 
-st.set_page_config(
-    page_title="AI Crop Yield Prediction",
-    page_icon="🌾",
-    layout="wide"
-)
-
-st.markdown("""
-<style>
-
-.main{
-background-color:#f7faf7;
-}
-
-.big-title{
-font-size:42px;
-font-weight:bold;
-color:#1B5E20;
-}
-
-.sub-title{
-font-size:18px;
-color:gray;
-}
-
-.card{
-background:#ffffff;
-padding:20px;
-border-radius:15px;
-box-shadow:0px 3px 10px rgba(0,0,0,0.15);
-text-align:center;
-}
-
-.metric{
-font-size:35px;
-font-weight:bold;
-color:#2E7D32;
-}
-
-</style>
-""",unsafe_allow_html=True)
-
-
-st.markdown(
-"<div class='big-title'>🌾 Crop Recommendation & Yield Prediction</div>",
-unsafe_allow_html=True
-)
-
-st.markdown(
-"<div class='sub-title'>Machine Learning Powered Agriculture Decision Support System</div>",
-unsafe_allow_html=True
-)
-
-# st.title("🌾 AI Crop Recommendation & Yield Prediction")
-# st.write("Predict suitable crop and expected production.")
-
-# ---------------------------------------------------
-# LOAD MODEL
-# ---------------------------------------------------
-
-model = joblib.load("models/model.pkl")
-encoders = joblib.load("models/encoders.pkl")
-
-# ---------------------------------------------------
-# LOAD DATASET
-# ---------------------------------------------------
-
-df = pd.read_csv("dataset/crop_data.csv")
-
-for col in ["State_Name", "District_Name", "Season", "Crop"]:
-    df[col] = df[col].astype(str).str.strip()
-
-df["District_Name"] = df["District_Name"].str.upper()
-
-# ---------------------------------------------------
-# SIDEBAR
-# ---------------------------------------------------
-
-st.sidebar.header("Enter Crop Details")
-
-state = st.sidebar.selectbox(
-    "State",
-    sorted(df["State_Name"].unique())
-)
-
-district = st.sidebar.selectbox(
-    "District",
-    sorted(
-        df[df["State_Name"] == state]["District_Name"].unique()
-    )
-)
-
-season = st.sidebar.selectbox(
-    "Season",
-    sorted(df["Season"].unique())
-)
-
-crop_year = st.sidebar.number_input(
-    "Crop Year",
-    2000,
-    2035,
-    2025
-)
-
-temperature = st.sidebar.slider(
-    "Temperature",
-    0,
-    50,
-    30
-)
-
-humidity = st.sidebar.slider(
-    "Humidity",
-    0,
-    100,
-    70
-)
-
-soil = st.sidebar.slider(
-    "Soil Moisture",
-    0,
-    100,
-    50
-)
-
-area = st.sidebar.number_input(
-    "Area",
-    1.0,
-    10000.0,
-    5.0
-)
-
-# ---------------------------------------------------
-# RECOMMEND CROP
-# ---------------------------------------------------
-
-recommended_crop = recommend_crop(
-    temperature,
-    humidity,
-    soil
-)
-confidence = 96
-# st.sidebar.success(
-#     f"Recommended Crop : {recommended_crop}"
+# st.set_page_config(
+#     page_title="AI Crop Yield Prediction",
+#     page_icon="🌾",
+#     layout="wide"
 # )
-st.sidebar.success("AI Recommendation Ready")
-col1,col2,col3,col4=st.columns(4)
 
-with col1:
-    st.metric(
-        "🌡 Temperature",
-        f"{temperature}°C"
-    )
+# st.markdown("""
+# <style>
 
-with col2:
-    st.metric(
-        "💧 Humidity",
-        f"{humidity}%"
-    )
+# .main{
+# background-color:#f7faf7;
+# }
 
-with col3:
-    st.metric(
-        "🌱 Soil Moisture",
-        f"{soil}%"
-    )
+# .big-title{
+# font-size:42px;
+# font-weight:bold;
+# color:#1B5E20;
+# }
 
-with col4:
-    st.metric(
-        "⭐ Confidence",
-        f"{confidence}%"
-    )
-# ---------------------------------------------------
-# PREDICT BUTTON
-# ---------------------------------------------------
+# .sub-title{
+# font-size:18px;
+# color:gray;
+# }
 
-if st.sidebar.button("Predict"):
+# .card{
+# background:#ffffff;
+# padding:20px;
+# border-radius:15px;
+# box-shadow:0px 3px 10px rgba(0,0,0,0.15);
+# text-align:center;
+# }
 
-    # Check if recommended crop exists in dataset
-    if recommended_crop not in encoders["Crop"].classes_:
+# .metric{
+# font-size:35px;
+# font-weight:bold;
+# color:#2E7D32;
+# }
 
-        st.error(
-            f"{recommended_crop} is not available in the training dataset."
-        )
+# </style>
+# """,unsafe_allow_html=True)
 
-    else:
 
-        state_encoded = encoders["State_Name"].transform([state])[0]
+# st.markdown(
+# "<div class='big-title'>🌾 Crop Recommendation & Yield Prediction</div>",
+# unsafe_allow_html=True
+# )
 
-        district_encoded = encoders["District_Name"].transform([district])[0]
+# st.markdown(
+# "<div class='sub-title'>Machine Learning Powered Agriculture Decision Support System</div>",
+# unsafe_allow_html=True
+# )
 
-        season_encoded = encoders["Season"].transform([season])[0]
+# # st.title("🌾 AI Crop Recommendation & Yield Prediction")
+# # st.write("Predict suitable crop and expected production.")
 
-        crop_encoded = encoders["Crop"].transform(
-            [recommended_crop]
-        )[0]
+# # ---------------------------------------------------
+# # LOAD MODEL
+# # ---------------------------------------------------
 
-        input_df = pd.DataFrame({
+# model = joblib.load("models/model.pkl")
+# encoders = joblib.load("models/encoders.pkl")
 
-            "State_Name":[state_encoded],
+# # ---------------------------------------------------
+# # LOAD DATASET
+# # ---------------------------------------------------
 
-            "District_Name":[district_encoded],
+# df = pd.read_csv("dataset/crop_data.csv")
 
-            "Crop_Year":[crop_year],
+# for col in ["State_Name", "District_Name", "Season", "Crop"]:
+#     df[col] = df[col].astype(str).str.strip()
 
-            "Season":[season_encoded],
+# df["District_Name"] = df["District_Name"].str.upper()
 
-            "Crop":[crop_encoded],
+# # ---------------------------------------------------
+# # SIDEBAR
+# # ---------------------------------------------------
 
-            "Temperature":[temperature],
+# st.sidebar.header("Enter Crop Details")
 
-            "Humidity":[humidity],
+# state = st.sidebar.selectbox(
+#     "State",
+#     sorted(df["State_Name"].unique())
+# )
 
-            "Soil_Moisture":[soil],
+# district = st.sidebar.selectbox(
+#     "District",
+#     sorted(
+#         df[df["State_Name"] == state]["District_Name"].unique()
+#     )
+# )
 
-            "Area":[area]
+# season = st.sidebar.selectbox(
+#     "Season",
+#     sorted(df["Season"].unique())
+# )
 
-        })
+# crop_year = st.sidebar.number_input(
+#     "Crop Year",
+#     2000,
+#     2035,
+#     2025
+# )
 
-        prediction = model.predict(input_df)[0]
+# temperature = st.sidebar.slider(
+#     "Temperature",
+#     0,
+#     50,
+#     30
+# )
 
-        st.success("Prediction Completed Successfully")
+# humidity = st.sidebar.slider(
+#     "Humidity",
+#     0,
+#     100,
+#     70
+# )
 
-        st.header("Prediction Result")
+# soil = st.sidebar.slider(
+#     "Soil Moisture",
+#     0,
+#     100,
+#     50
+# )
 
-        st.write("### 🌱 Recommended Crop")
+# area = st.sidebar.number_input(
+#     "Area",
+#     1.0,
+#     10000.0,
+#     5.0
+# )
 
-        # st.success(recommended_crop)
-        st.markdown("## 🌱 Recommended Crop")
+# # ---------------------------------------------------
+# # RECOMMEND CROP
+# # ---------------------------------------------------
 
-        st.success(recommended_crop)
+# recommended_crop = recommend_crop(
+#     temperature,
+#     humidity,
+#     soil
+# )
+# confidence = 96
+# # st.sidebar.success(
+# #     f"Recommended Crop : {recommended_crop}"
+# # )
+# st.sidebar.success("AI Recommendation Ready")
+# col1,col2,col3,col4=st.columns(4)
 
-        st.info(
-"""
-Reason
+# with col1:
+#     st.metric(
+#         "🌡 Temperature",
+#         f"{temperature}°C"
+#     )
 
-✔ Climate matches crop requirements
+# with col2:
+#     st.metric(
+#         "💧 Humidity",
+#         f"{humidity}%"
+#     )
 
-✔ Suitable humidity
+# with col3:
+#     st.metric(
+#         "🌱 Soil Moisture",
+#         f"{soil}%"
+#     )
 
-✔ Suitable soil moisture
+# with col4:
+#     st.metric(
+#         "⭐ Confidence",
+#         f"{confidence}%"
+#     )
+# # ---------------------------------------------------
+# # PREDICT BUTTON
+# # ---------------------------------------------------
 
-✔ Historical production is high
-"""
-)
+# if st.sidebar.button("Predict"):
 
-        # st.write("### 🌾 Expected Production")
+#     # Check if recommended crop exists in dataset
+#     if recommended_crop not in encoders["Crop"].classes_:
 
-        # st.metric(
-        #     "Production",
-        #     f"{prediction:.2f} Tons"
-        # )
-    st.markdown("## 📈 Expected Production")
+#         st.error(
+#             f"{recommended_crop} is not available in the training dataset."
+#         )
 
-    st.metric(
-    label="Production",
-    value=f"{prediction:.2f} Tons"
-)
-# ---------------------------------------------------
-# DATASET
-# ---------------------------------------------------
+#     else:
 
-st.header("Dataset Preview")
+#         state_encoded = encoders["State_Name"].transform([state])[0]
 
-# st.dataframe(df.head())
-filtered_df=df[
-(df["State_Name"]==state)&
-(df["District_Name"]==district)&
-(df["Season"]==season)
-]
+#         district_encoded = encoders["District_Name"].transform([district])[0]
 
-st.dataframe(
-filtered_df,
-use_container_width=True
-)
-# ---------------------------------------------------
-# ANALYTICS
-# ---------------------------------------------------
+#         season_encoded = encoders["Season"].transform([season])[0]
 
-st.header("📊 Analytics")
+#         crop_encoded = encoders["Crop"].transform(
+#             [recommended_crop]
+#         )[0]
 
-if not filtered_df.empty:
+#         input_df = pd.DataFrame({
 
-    crop_chart = (
-        filtered_df
-        .groupby("Crop")["Production"]
-        .sum()
-        .reset_index()
-    )
+#             "State_Name":[state_encoded],
 
-    fig = px.bar(
-        crop_chart,
-        x="Crop",
-        y="Production",
-        color="Production",
-        title="Production by Crop"
-    )
+#             "District_Name":[district_encoded],
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
+#             "Crop_Year":[crop_year],
 
-else:
-    st.warning("No data available for the selected filters.")
-# ---------------------------------------------------
-# ABOUT
-# ---------------------------------------------------
+#             "Season":[season_encoded],
 
-st.header("About")
+#             "Crop":[crop_encoded],
 
-st.write("""
-### Algorithms Used
+#             "Temperature":[temperature],
 
-- Linear Regression
-- Decision Tree
-- Random Forest
+#             "Humidity":[humidity],
 
-### Functional Flow
+#             "Soil_Moisture":[soil],
 
-User Input
+#             "Area":[area]
 
-↓
+#         })
 
-Crop Recommendation
+#         prediction = model.predict(input_df)[0]
 
-↓
+#         st.success("Prediction Completed Successfully")
 
-Yield Prediction
+#         st.header("Prediction Result")
 
-↓
+#         st.write("### 🌱 Recommended Crop")
 
-Display Result
-""")
+#         # st.success(recommended_crop)
+#         st.markdown("## 🌱 Recommended Crop")
+
+#         st.success(recommended_crop)
+
+#         st.info(
+# """
+# Reason
+
+# ✔ Climate matches crop requirements
+
+# ✔ Suitable humidity
+
+# ✔ Suitable soil moisture
+
+# ✔ Historical production is high
+# """
+# )
+
+#         # st.write("### 🌾 Expected Production")
+
+#         # st.metric(
+#         #     "Production",
+#         #     f"{prediction:.2f} Tons"
+#         # )
+#     st.markdown("## 📈 Expected Production")
+
+#     st.metric(
+#     label="Production",
+#     value=f"{prediction:.2f} Tons"
+# )
+# # ---------------------------------------------------
+# # DATASET
+# # ---------------------------------------------------
+
+# st.header("Dataset Preview")
+
+# # st.dataframe(df.head())
+# filtered_df=df[
+# (df["State_Name"]==state)&
+# (df["District_Name"]==district)&
+# (df["Season"]==season)
+# ]
+
+# st.dataframe(
+# filtered_df,
+# use_container_width=True
+# )
+# # ---------------------------------------------------
+# # ANALYTICS
+# # ---------------------------------------------------
+
+# st.header("📊 Analytics")
+
+# if not filtered_df.empty:
+
+#     crop_chart = (
+#         filtered_df
+#         .groupby("Crop")["Production"]
+#         .sum()
+#         .reset_index()
+#     )
+
+#     fig = px.bar(
+#         crop_chart,
+#         x="Crop",
+#         y="Production",
+#         color="Production",
+#         title="Production by Crop"
+#     )
+
+#     st.plotly_chart(
+#         fig,
+#         use_container_width=True
+#     )
+
+# else:
+#     st.warning("No data available for the selected filters.")
+# # ---------------------------------------------------
+# # ABOUT
+# # ---------------------------------------------------
+
+# st.header("About")
+
+# st.write("""
+# ### Algorithms Used
+
+# - Linear Regression
+# - Decision Tree
+# - Random Forest
+
+# ### Functional Flow
+
+# User Input
+
+# ↓
+
+# Crop Recommendation
+
+# ↓
+
+# Yield Prediction
+
+# ↓
+
+# Display Result
+# """)
+import streamlit as st
+
+st.title("Hello World")
+st.success("If you see this, Streamlit is working.")
