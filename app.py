@@ -390,20 +390,23 @@
 # # st.write("7")
 # st.write("15")
 import streamlit as st
-
-st.title("Step 1")
-
 import pandas as pd
-st.write("Pandas OK")
-
-import numpy as np
-st.write("NumPy OK")
-
 import joblib
-st.write("Joblib OK")
 
-import plotly.express as px
-st.write("Plotly OK")
+st.title("Debug Test")
 
-import sklearn
-st.write("Scikit-learn OK")
+st.write("1. Imports OK")
+
+df = pd.read_csv("dataset/crop_data.csv")
+st.write("2. Dataset Loaded")
+
+model = joblib.load("models/model.pkl")
+st.write("3. Model Loaded")
+
+encoders = joblib.load("models/encoders.pkl")
+st.write("4. Encoders Loaded")
+
+import recommendation
+st.write("5. recommendation.py Imported")
+
+st.success("Everything loaded successfully")
