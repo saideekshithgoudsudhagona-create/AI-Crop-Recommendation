@@ -359,23 +359,25 @@ use_container_width=True
 # st.header("About")
 st.header("📊 Analytics")
 
-st.write("Reached Analytics")
+if not filtered_df.empty:
+    crop_chart = (
+        filtered_df
+        .groupby("Crop")["Production"]
+        .sum()
+        .reset_index()
+    )
 
-import plotly.express as px
+    fig = px.bar(
+        crop_chart,
+        x="Crop",
+        y="Production",
+        color="Production",
+        title="Production by Crop"
+    )
 
-test = pd.DataFrame({
-    "Crop": ["Rice", "Wheat", "Maize"],
-    "Production": [100, 200, 150]
-})
-
-fig = px.bar(
-    test,
-    x="Crop",
-    y="Production",
-    title="Test Chart"
-)
-
-st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
+else:
+    st.warning("No data available for the selected filters.")
 
 st.header("About")
 
