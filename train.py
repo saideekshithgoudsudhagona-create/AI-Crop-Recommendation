@@ -96,12 +96,18 @@ models = {
         random_state=42
     ),
 
+    # "Random Forest": RandomForestRegressor(
+    #     n_estimators=50,
+    #     max_depth=15,
+    #     random_state=42,
+    #     n_jobs=-1
+    # )
     "Random Forest": RandomForestRegressor(
-        n_estimators=50,
-        max_depth=15,
-        random_state=42,
-        n_jobs=-1
-    )
+    n_estimators=20,
+    max_depth=10,
+    random_state=42,
+    n_jobs=-1
+)
 }
     # "Random Forest": RandomForestRegressor(
     #     n_estimators=200,
