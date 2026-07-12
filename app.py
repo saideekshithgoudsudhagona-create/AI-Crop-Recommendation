@@ -68,23 +68,38 @@ unsafe_allow_html=True
 # LOAD MODEL
 # ---------------------------------------------------
 
-model = joblib.load("models/model.pkl")
-encoders = joblib.load("models/encoders.pkl")
-# st.success("App Started Successfully")
-# st.stop()
-# ---------------------------------------------------
-# LOAD DATASET
-# ---------------------------------------------------
+# model = joblib.load("models/model.pkl")
+# encoders = joblib.load("models/encoders.pkl")
+# # st.success("App Started Successfully")
+# # st.stop()
+# # ---------------------------------------------------
+# # LOAD DATASET
+# # ---------------------------------------------------
 
-df = pd.read_csv("dataset/crop_data.csv")
-# st.write("8")
+# df = pd.read_csv("dataset/crop_data.csv")
+# # st.write("8")
 
-for col in ["State_Name", "District_Name", "Season", "Crop"]:
-    df[col] = df[col].astype(str).str.strip()
+# for col in ["State_Name", "District_Name", "Season", "Crop"]:
+#     df[col] = df[col].astype(str).str.strip()
 
-df["District_Name"] = df["District_Name"].str.upper()
-# st.write("9")
+# df["District_Name"] = df["District_Name"].str.upper()
+# # st.write("9")
+@st.cache_resource
+def load_model():
+    model = joblib.load("models/model.pkl")
+    encoders = joblib.load("models/encoders.pkl")
+    return model, encoders
 
+@st.cache_data
+def load_data():
+    df = pd.read_csv("dataset/crop_data.csv")
+    for col in ["State_Name", "District_Name", "Season", "Crop"]:
+        df[col] = df[col].astype(str).str.strip()
+    df["District_Name"] = df["District_Name"].str.upper()
+    return df
+
+model, encoders = load_model()
+df = load_data()
 # ---------------------------------------------------
 # SIDEBAR
 # ---------------------------------------------------
@@ -242,7 +257,7 @@ if st.sidebar.button("Predict"):
         st.markdown("## 🌱 Recommended Crop")
 
         st.success(recommended_crop)
-
+            
         st.info(
 """
 Reason
@@ -257,18 +272,38 @@ Reason
 """
 )
 
-        # st.write("### 🌾 Expected Production")
+        st.markdown("## 📈 Expected Production")
 
-        # st.metric(
-        #     "Production",
-        #     f"{prediction:.2f} Tons"
-        # )
-    st.markdown("## 📈 Expected Production")
+        st.metric(
+            label="Production",
+            value=f"{prediction:.2f} Tons"
+        )
+#         st.info(
+# """
+# Reason
 
-    st.metric(
-    label="Production",
-    value=f"{prediction:.2f} Tons"
-)
+# ✔ Climate matches crop requirements
+
+# ✔ Suitable humidity
+
+# ✔ Suitable soil moisture
+
+# ✔ Historical production is high
+# """
+# )
+
+#         # st.write("### 🌾 Expected Production")
+
+#         # st.metric(
+#         #     "Production",
+#         #     f"{prediction:.2f} Tons"
+#         # )
+#     st.markdown("## 📈 Expected Production")
+
+#     st.metric(
+#     label="Production",
+#     value=f"{prediction:.2f} Tons"
+# )
 # ---------------------------------------------------
 # DATASET
 # ---------------------------------------------------
