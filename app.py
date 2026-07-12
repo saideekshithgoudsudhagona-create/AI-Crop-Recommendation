@@ -68,10 +68,10 @@ unsafe_allow_html=True
 # LOAD MODEL
 # ---------------------------------------------------
 
-# model = joblib.load("models/model.pkl")
-# encoders = joblib.load("models/encoders.pkl")
-st.success("App Started Successfully")
-st.stop()
+model = joblib.load("models/model.pkl")
+encoders = joblib.load("models/encoders.pkl")
+# st.success("App Started Successfully")
+# st.stop()
 # ---------------------------------------------------
 # LOAD DATASET
 # ---------------------------------------------------
