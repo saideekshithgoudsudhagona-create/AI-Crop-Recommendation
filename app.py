@@ -251,12 +251,18 @@ if st.sidebar.button("Predict"):
 
         st.header("Prediction Result")
 
-        st.write("### 🌱 Recommended Crop")
 
         # st.success(recommended_crop)
-        st.markdown("## 🌱 Recommended Crop")
+        # st.markdown("## 🌱 Recommended Crop")
+        # st.success(recommended_crop)
+        st.markdown("#### 🌱 Recommended Crop")
 
-        st.success(recommended_crop)
+        st.markdown(
+    f"<div style='background-color:#1B5E20; color:white; padding:20px; "
+    f"border-radius:12px; text-align:center; font-size:42px; font-weight:bold;'>"
+    f"{recommended_crop}</div>",
+    unsafe_allow_html=True
+)
             
         st.info(
 """
